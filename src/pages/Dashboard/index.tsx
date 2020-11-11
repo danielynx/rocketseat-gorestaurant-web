@@ -29,57 +29,54 @@ const Dashboard: React.FC = () => {
     async function loadFoods(): Promise<void> {
       const response = await api.get('foods');
 
-      if (response.data) {
-        setFoods(response.data);
-      }
+      setFoods(response.data);
     }
 
     loadFoods();
   }, []);
 
-  async function handleAddFood({
-    name,
-    image,
-    price,
-    description,
-  }: Omit<IFoodPlate, 'id' | 'available'>): Promise<void> {
+  async function handleAddFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
     try {
-      const { data: food } = await api.post('foods', {
-        name,
-        image,
-        price,
-        description,
+      const response = await api.post('/foods', {
+        ...food,
         available: true,
       });
 
-      setFoods([...foods, food]);
+      setFoods([...foods, response.data]);
     } catch (err) {
       console.log(err);
     }
   }
 
-  async function handleUpdateFood({
-    name,
-    image,
-    price,
-    description,
-  }: Omit<IFoodPlate, 'id' | 'available'>): Promise<void> {
-    const { data: foodUpdated } = await api.put(`foods/${editingFood.id}`, {
-      name,
-      image,
-      price,
-      description,
-    });
+  async function handleUpdateFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    try {
+      const { data: foodUpdated } = await api.put(`/foods/${editingFood.id}`, {
+        ...editingFood,
+        ...food,
+      });
 
-    setFoods(
-      foods.map(food => (food.id === foodUpdated.id ? foodUpdated : food)),
-    );
+      setFoods(
+        foods.map(mappedFood =>
+          mappedFood.id === foodUpdated.id ? foodUpdated : mappedFood,
+        ),
+      );
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async function handleDeleteFood(id: number): Promise<void> {
-    await api.delete(`foods/${id}`);
+    try {
+      await api.delete(`/foods/${id}`);
 
-    setFoods(foods.filter(food => food.id !== id));
+      setFoods(foods.filter(food => food.id !== id));
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   function toggleModal(): void {
