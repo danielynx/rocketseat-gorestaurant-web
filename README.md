@@ -6,7 +6,8 @@ This is the GoRestaurant's Web Page to manage the food orders.
 
 ## What I learned in this project?
 
- -
+ - Create a modal using react-modal library
+ - Transform a checkbox input in a slider component
 
 ## See the screenshots
 
